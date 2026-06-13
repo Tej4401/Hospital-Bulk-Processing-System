@@ -111,7 +111,7 @@ The backend serves interactive API documentation at `/docs`.
 
 Deployed
 
-![Swagger UI](swagger-screenshot.png)
+<img width="1536" height="718" alt="image" src="https://github.com/user-attachments/assets/99c91dd7-8f34-4f13-9d93-9c9b32ff8b0d" />
 
 Local
 
