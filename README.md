@@ -135,7 +135,7 @@ The frontend provides a simple upload flow and real-time progress view.
 
 Deployed
 
-![UI Cient](ui-client.png)
+<img width="1558" height="962" alt="image" src="https://github.com/user-attachments/assets/c160c417-5440-472a-8f2e-31572fd4de70" />
 
 Local
 
