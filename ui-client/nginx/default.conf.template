@@ -28,7 +28,6 @@ server {
         proxy_cache off;
         proxy_set_header Connection "";
         proxy_read_timeout 3600s;
-        chunked_transfer_encoding off;
     }
 
     # API: batch listing
