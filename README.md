@@ -93,6 +93,17 @@ Run the backend first (publishes port `8080`), then the UI.
 - **Backend:** `pip install -r requirements.txt`, run Redis, then `python worker.py` and `gunicorn wsgi:app` (or `python wsgi.py`).
 - **Frontend:** `npm install && npm run dev` (http://localhost:3000).
 
+### Backend tests
+
+- Install test dependencies:
+  ```bash
+  pip install -r requirements.txt -r requirements-dev.txt
+  ```
+- Run the backend unit tests:
+  ```bash
+  pytest
+  ```
+
 ## Configuration (key env vars)
 
 - **Backend** (`bulk-hospital-processor/.env`)
