@@ -1,0 +1,18 @@
+services:
+  ui:
+    build: .
+    container_name: bhp-ui
+    ports:
+      - "3000:80"
+    environment:
+      # The SPA proxies /api -> BACKEND_URL. Default reaches the backend that
+      # is published on the host's port 8080 (see the backend's compose).
+      BACKEND_URL: ${BACKEND_URL:-http://host.docker.internal:8080}
+    extra_hosts:
+      # Lets the container resolve the host on Linux (no-op on Docker Desktop).
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

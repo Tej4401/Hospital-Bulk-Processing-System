@@ -1,0 +1,100 @@
+# nginx config rendered at container start via envsubst (official nginx image
+# substitutes ${BACKEND_URL}; nginx's own $variables are left untouched).
+server {
+    listen       80;
+    server_name  _;
+
+    # Allow CSV uploads comfortably (backend caps actual size anyway).
+    client_max_body_size 10m;
+
+    root   /usr/share/nginx/html;
+    index  index.html;
+
+    # API: hospital batch endpoints and SSE stream
+    location ^~ /hospitals/ {
+        proxy_pass ${BACKEND_URL};
+        proxy_http_version 1.1;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_ssl_server_name on;
+        proxy_ssl_verify off;
+        proxy_ssl_protocols TLSv1.2 TLSv1.3;
+
+        # Stream Server-Sent Events without buffering so progress arrives live.
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_set_header Connection "";
+        proxy_read_timeout 3600s;
+        chunked_transfer_encoding off;
+    }
+
+    # API: batch listing
+    location ^~ /batches {
+        proxy_pass ${BACKEND_URL};
+        proxy_http_version 1.1;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_ssl_server_name on;
+        proxy_ssl_verify off;
+        proxy_ssl_protocols TLSv1.2 TLSv1.3;
+
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_set_header Connection "";
+        proxy_read_timeout 60s;
+    }
+
+    # API: docs and health endpoints
+    location ^~ /docs {
+        proxy_pass ${BACKEND_URL};
+        proxy_http_version 1.1;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_ssl_server_name on;
+        proxy_ssl_verify off;
+        proxy_ssl_protocols TLSv1.2 TLSv1.3;
+
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_set_header Connection "";
+        proxy_read_timeout 60s;
+    }
+
+    location = /health {
+        proxy_pass ${BACKEND_URL};
+        proxy_http_version 1.1;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_ssl_server_name on;
+        proxy_ssl_verify off;
+        proxy_ssl_protocols TLSv1.2 TLSv1.3;
+
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_set_header Connection "";
+        proxy_read_timeout 10s;
+    }
+
+    # SPA: serve index.html for any non-asset, non-API route.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location = /healthz {
+        access_log off;
+        return 200 "ok\n";
+        add_header Content-Type text/plain;
+    }
+}
